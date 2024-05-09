@@ -70,42 +70,21 @@ namespace net_ef_videogame
                             Console.WriteLine(ex.Message);
                         }
                     }
-                    using VideogameContext db = new VideogameContext();
-                    Videogame nuovoGioco = new Videogame
-                    {
-                        Name = gameName,
-                        Description = gameDescription,
-                        Release = gameDate,
-                        SoftwareHouseID = gameSoftId,
-                        CreatedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now,
-                    };
-                    db.Add(nuovoGioco);
-                    db.SaveChanges();
-                    Console.WriteLine("Gioco aggiunto con successo");
+                    VideogameManager.AddGame(gameName, gameDescription, gameDate, gameSoftId);
                 }
                 else if (choise == 2)
-                {
-                    using VideogameContext db = new VideogameContext();
+                {                
                     Console.Write("Inserisci l'Id che vuoi cercare: ");
                     int input = int.Parse(Console.ReadLine());
-
-                    Videogame gioco = db.Videogames.Where(v => v.Id == input).Include("Softwarehouse").First();
-
-                    Console.WriteLine($"\nNome: {gioco.Name}");
-                    Console.WriteLine($"Descrizione: {gioco.Description}");
-                    Console.WriteLine($"Data di rilascio: {gioco.Release.ToString("dd/MM/yyyy")}");
-                    Console.WriteLine($"Software House: {gioco.Softwarehouse.Name}\n");
+                    VideogameManager.GetGameById(input);
                 }
                 else if (choise == 3)
                 {
-                    using VideogameContext db = new VideogameContext();
                     Console.Write("Inserisci il nome che vuoi cercare: ");
                     string input = Console.ReadLine();
+                    var giochi = VideogameManager.GetGamesByName(input);
 
-                    List<Videogame> giochi = db.Videogames.Where(v => v.Name.Contains(input)).Include("Softwarehouse").ToList();
-
-                    foreach(var gioco in giochi)
+                    foreach (var gioco in giochi)
                     {
                         Console.WriteLine($"\nNome: {gioco.Name}");
                         Console.WriteLine($"Descrizione: {gioco.Description}");
@@ -115,13 +94,9 @@ namespace net_ef_videogame
                 }
                 else if (choise == 4)
                 {
-                    using VideogameContext db = new VideogameContext();
                     Console.Write("Inserisci l'Id del videogame che si deve eliminare: ");
                     int input = int.Parse(Console.ReadLine());
-
-                    Videogame gioco = db.Videogames.Where(v => v.Id == input).First();
-                    db.Remove(gioco);
-                    db.SaveChanges();
+                    VideogameManager.DeleteGameById(input);
                 }
                 else if (choise == 5)
                 {
@@ -163,27 +138,16 @@ namespace net_ef_videogame
                             Console.WriteLine(ex.Message);
                         }
                     }
-                    using VideogameContext db = new VideogameContext();
-                    SoftwareHouse nuovaCasa = new SoftwareHouse
-                    {
-                        Name = houseName,
-                        Code = houseCode,
-                        City = houseCity,
-                        Country = houseCountry,
-                        CreatedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now,
-                    };
-                    db.Add(nuovaCasa);
-                    db.SaveChanges();
+                    VideogameManager.AddHouse(houseName, houseCode, houseCity, houseCountry);
                     Console.WriteLine("Software house aggiunta con successo");
                 }
                 else if(choise == 6)
                 {
-                    using VideogameContext db = new VideogameContext();
+                    
                     Console.Write("Inserisci l'Id della software house: ");
                     int input = int.Parse(Console.ReadLine());
 
-                    List<Videogame> giochi = db.Videogames.Where(s => s.SoftwareHouseID == input).ToList();
+                    var giochi = VideogameManager.GetGamesByHouseId(input);
 
                     foreach(var g in giochi)
                     {
